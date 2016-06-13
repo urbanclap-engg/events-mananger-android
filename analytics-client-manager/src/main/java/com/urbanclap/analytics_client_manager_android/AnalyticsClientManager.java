@@ -1,6 +1,5 @@
-package com.example.analytics_client_manager_android;
+package com.urbanclap.analytics_client_manager_android;
 
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 
 import org.json.JSONException;

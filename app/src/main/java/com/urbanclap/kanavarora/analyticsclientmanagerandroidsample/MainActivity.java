@@ -1,4 +1,4 @@
-package com.example.kanavarora.analyticsclientmanagerandroidsample;
+package com.urbanclap.kanavarora.analyticsclientmanagerandroidsample;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

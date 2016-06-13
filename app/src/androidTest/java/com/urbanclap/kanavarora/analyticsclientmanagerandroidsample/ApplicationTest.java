@@ -1,4 +1,4 @@
-package com.example.kanavarora.analyticsclientmanagerandroidsample;
+package com.urbanclap.kanavarora.analyticsclientmanagerandroidsample;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

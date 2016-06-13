@@ -1,4 +1,4 @@
-package com.example.analytics_client_manager_android;
+package com.urbanclap.analytics_client_manager_android;
 
 /**
  * Created by kanavarora on 13/06/16.

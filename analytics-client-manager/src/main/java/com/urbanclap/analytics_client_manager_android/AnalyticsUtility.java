@@ -1,6 +1,4 @@
-package com.example.analytics_client_manager_android;
-
-import android.content.res.AssetManager;
+package com.urbanclap.analytics_client_manager_android;
 
 import java.io.IOException;
 import java.util.HashMap;
