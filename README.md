@@ -12,7 +12,7 @@ How to develop?
 
 1. Make changes.
 2. Unit test and add changelog.
-3. Add to local.properties bintray username and password.
+3. Add to local.properties bintray username and api key. Ask for access to bintray.com
 4. Change the version in build.gradle for module.
 5. run gradlew install
 6. run gradlew bintrayUpload
