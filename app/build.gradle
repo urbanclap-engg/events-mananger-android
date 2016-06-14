@@ -20,12 +20,13 @@ android {
 }
 
 repositories {
-    maven { url "https://dl.bintray.com/kanavarora/maven" }
+    maven { url "https://dl.bintray.com/uc-engg/maven" }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:22.2.1'
+    //compile 'com.urbanclap:analytics-client-manager:0.0.1'
     compile project(':analytics-client-manager')
 }
