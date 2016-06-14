@@ -13,11 +13,11 @@ ext {
     siteUrl = 'https://gitlab.urbanclap.com/urbanclap/analytics-client-manager-android'
     gitUrl = 'https://gitlab.urbanclap.com/urbanclap/analytics-client-manager-android.git'
 
-    libraryVersion = '0.0.2'
+    libraryVersion = '0.0.1'
 
     developerId = 'urbanclap'
     developerName = 'Urbanclap'
-    developerEmail = 'kanavarora@urbanclap.com'
+    developerEmail = 'engg-admin@urbanclap.com'
 
     licenseName = 'The Apache Software License, Version 2.0'
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
