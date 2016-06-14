@@ -1,5 +1,31 @@
 AnalyticsClientManager
 
+How to integrate?
+In your build.grade, for repositories add the following repo: 
+maven { url "https://dl.bintray.com/uc-engg/maven" }
+
+In dependencies add:
+compile 'com.urbanclap:analytics-client-manager:0.0.1'
+
+
+How to develop?
+
+1. Make changes.
+2. Unit test and add changelog.
+3. Add to local.properties bintray username and password.
+4. Change the version in build.gradle for module.
+5. run gradlew install
+6. run gradlew bintrayUpload
+7. Commit to master here.
+Useful instructions: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
+ 
+CHANGELOG
+
+0.0.1
+First version with core code
+
+
+
 More details here: https://urbanclap.atlassian.net/wiki/display/ENGG/Client+side+Event+Manager
 How to use:
 
