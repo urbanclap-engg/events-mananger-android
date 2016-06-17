@@ -89,8 +89,8 @@ public class AnalyticsClientManager {
             return;
         }
         for (String trigger : channelTriggers.keySet()) {
-            if ((triggerEventMappings.get(trigger) != null) ||
-                    (triggerEventMappings.get(trigger).get(channel) != null)) {
+            if ((triggerEventMappings.get(trigger) == null) ||
+                    (triggerEventMappings.get(trigger).get(channel) == null)) {
                 AnalyticsClientManager.logError("event missing for trigger: " + trigger +
                  " for channel: " + channel);
             }

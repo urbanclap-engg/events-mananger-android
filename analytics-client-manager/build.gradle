@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://gitlab.urbanclap.com/urbanclap/analytics-client-manager-android'
     gitUrl = 'https://gitlab.urbanclap.com/urbanclap/analytics-client-manager-android.git'
 
-    libraryVersion = '0.0.2'
+    libraryVersion = '0.0.3'
 
     developerId = 'urbanclap'
     developerName = 'Urbanclap'

@@ -20,6 +20,8 @@ How to develop?
 Useful instructions: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
  
 CHANGELOG
+0.0.3
+- Fix for crash in validation during init.
 
 0.0.2
 - changed AnalayticsClientManager initialization method to take Context instead of resources as argument
