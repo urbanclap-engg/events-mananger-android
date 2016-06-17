@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import android.content.Context;
 
 public class AnalyticsClientManager {
     private static final String KEYWORD_DEV_TO_PROVIDE = "devToProvide";
@@ -18,7 +19,7 @@ public class AnalyticsClientManager {
     private HashMap<String, AnalyticsClientInterface> channelClients;
     private HashMap<String, HashMap<String, CSVProperties>> channelTriggerMappings;
     private HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings;
-    private Resources r;
+    private Context context;
 
 
     private AnalyticsClientManager() {}
@@ -29,18 +30,18 @@ public class AnalyticsClientManager {
 
     public static void initialize(HashMap<String, ChannelConfig> channelConfigs,
                                   HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings,
-                                  Resources r) {
-        AnalyticsClientManager.initialize(channelConfigs, triggerEventMappings, r, true, true);
+                                  Context c) {
+        AnalyticsClientManager.initialize(channelConfigs, triggerEventMappings, c, true, true);
     }
 
     public static void initialize(HashMap<String, ChannelConfig> channelConfigs,
                                   HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings,
-                                  Resources r,
+                                  Context c,
                                   boolean enableStrictKeyValidation,
                                   boolean enableAlertOnError) {
         m_enableStrictKeyValidation = enableStrictKeyValidation;
         m_enableAlertOnError = enableAlertOnError;
-        m_instance.init(channelConfigs, triggerEventMappings, r);
+        m_instance.init(channelConfigs, triggerEventMappings, c);
     }
 
     private static void logError(String errorString) {
@@ -51,33 +52,31 @@ public class AnalyticsClientManager {
 
     protected void init(HashMap<String,ChannelConfig> channelConfigs,
                         HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings,
-                        Resources r) {
+                        Context c) {
         this.channelClients = new HashMap<String, AnalyticsClientInterface>();
         this.channelTriggerMappings = new HashMap<>();
-        this.r = r;
+        this.context = c;
 
         for (Map.Entry<String, ChannelConfig> entry : channelConfigs.entrySet()) {
             String channel = entry.getKey();
             ChannelConfig channelConfig = entry.getValue();
-            int csvFile =  (channelConfig.get("csvFile") instanceof Integer) ? (Integer) channelConfig.get("csvFile") : -1;
+            int csvFile = channelConfig.getCsvFile();
             if (csvFile < 0) {
                 AnalyticsClientManager.logError("missing csv file for config of channel: " + channel);
                 continue;
             }
 
-            AnalyticsClientInterface channelClient =
-                    (channelConfig.get("client") instanceof AnalyticsClientInterface) ?
-                            (AnalyticsClientInterface)channelConfig.get("client"): null;
+            AnalyticsClientInterface channelClient = channelConfig.getChannelClient();
             if (channelClient == null) {
                 AnalyticsClientManager.logError("client in config does not implement AnalyticsClientInterface for channel: " + channel);
                 continue;
             }
 
-            HashMap<String, CSVProperties> channelTriggers = AnalyticsUtility.parseCSVFileIntoAnalyticsEvents(this.r, csvFile);
+            HashMap<String, CSVProperties> channelTriggers = AnalyticsUtility.parseCSVFileIntoAnalyticsEvents(this.context.getResources(), csvFile);
             this.channelTriggerMappings.put(channel, channelTriggers);
             AnalyticsClientManager.validateMissingChannelsForTriggers(channel, channelTriggers, triggerEventMappings);
 
-            channelClient.setup();
+            channelClient.setup(this.context);
             this.channelClients.put(channel, channelClient);
         }
         this.triggerEventMappings = triggerEventMappings;

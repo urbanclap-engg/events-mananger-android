@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import android.content.Context;
 
 /**
  * Created by kanavarora on 13/06/16.
@@ -43,10 +44,7 @@ public class AnalyticsClientManagerTestCase extends AndroidTestCase {
     public void testBasic () {
         final TestChannel tc = new TestChannel();
         HashMap<String, ChannelConfig> channelConfigs = new HashMap<String, ChannelConfig>() {{
-            put("testChannel", new ChannelConfig() {{
-                put("csvFile", R.raw.test_channel_events);
-                put("client", tc);
-            }});
+            put("testChannel", new ChannelConfig(R.raw.test_channel_events, tc));
         }};
         HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings = new HashMap<String, HashMap<String, DevOverrides>>() {{
             put("trigger1", new HashMap<String, DevOverrides>(){{
@@ -67,7 +65,7 @@ public class AnalyticsClientManagerTestCase extends AndroidTestCase {
         }};
 
 
-        AnalyticsClientManager.initialize(channelConfigs, triggerEventMappings, getContext().getResources(), true, true);
+        AnalyticsClientManager.initialize(channelConfigs, triggerEventMappings, getContext(), true, true);
 
         AnalyticsClientManager.triggerEvent("trigger1", null);
         assertTrue(tc.events.size() == 1);
@@ -166,7 +164,7 @@ public class AnalyticsClientManagerTestCase extends AndroidTestCase {
     public static class TestChannel implements AnalyticsClientInterface {
         public ArrayList<JSONObject> events;
         @Override
-        public void setup() {
+        public void setup(Context context) {
             events = new ArrayList<>();
         }
 

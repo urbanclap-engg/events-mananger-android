@@ -21,6 +21,12 @@ Useful instructions: https://inthecheesefactory.com/blog/how-to-upload-library-t
  
 CHANGELOG
 
+0.0.2
+- changed AnalayticsClientManager initialization method to take Context instead of resources as argument
+- changed AnalyicsClientInterface to have setup take Context as argument.
+- ChannelConfig class is now a proper class instead of extending HashMap.
+
+
 0.0.1
 First version with core code
 
