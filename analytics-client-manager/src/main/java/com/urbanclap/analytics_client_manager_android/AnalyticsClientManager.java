@@ -8,8 +8,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import android.content.Context;
+import android.util.Log;
 
 public class AnalyticsClientManager {
+    private static final String LOG_TAG = "AnalyticsClientManager";
     private static final String KEYWORD_DEV_TO_PROVIDE = "devToProvide";
 
     private static AnalyticsClientManager m_instance;
@@ -22,7 +24,7 @@ public class AnalyticsClientManager {
     private Context context;
 
 
-    private AnalyticsClientManager() {}
+    protected AnalyticsClientManager() {}
 
     static{
         m_instance = new AnalyticsClientManager();
@@ -44,9 +46,9 @@ public class AnalyticsClientManager {
         m_instance.init(channelConfigs, triggerEventMappings, c);
     }
 
-    private static void logError(String errorString) {
+    protected static void logError(String errorString) {
         // TODO: show an acutal alert.
-        System.err.println("Analytics Error: " + errorString);
+        Log.e(LOG_TAG, errorString);
     }
 
 

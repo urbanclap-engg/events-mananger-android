@@ -20,6 +20,10 @@ How to develop?
 Useful instructions: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
  
 CHANGELOG
+0.0.4
+- Making default constructor protected
+- Changed system.err statments to Log statments.
+
 0.0.3
 - Fix for crash in validation during init.
 
