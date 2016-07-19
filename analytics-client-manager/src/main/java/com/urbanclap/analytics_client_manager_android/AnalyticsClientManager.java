@@ -134,7 +134,9 @@ public class AnalyticsClientManager {
             if (csvProperties == null) {
                 AnalyticsClientManager.logError("Trigger: " + trigger +
                 " not present in csv file for channel: " + channel);
+                return;
             }
+
 
             JSONObject eventProperties = new JSONObject();
             boolean isMissingKey = false;
