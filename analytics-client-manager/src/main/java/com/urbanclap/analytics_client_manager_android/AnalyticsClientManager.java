@@ -1,14 +1,13 @@
 package com.urbanclap.analytics_client_manager_android;
 
-import android.content.res.Resources;
+import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import android.content.Context;
-import android.util.Log;
 
 public class AnalyticsClientManager {
     private static final String LOG_TAG = "AnalyticsClientManager";
@@ -18,17 +17,16 @@ public class AnalyticsClientManager {
     private static boolean m_enableStrictKeyValidation;
     private static boolean m_enableAlertOnError;
 
+    static {
+        m_instance = new AnalyticsClientManager();
+    }
+
     private HashMap<String, AnalyticsClientInterface> channelClients;
     private HashMap<String, HashMap<String, CSVProperties>> channelTriggerMappings;
     private HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings;
     private Context context;
 
-
     protected AnalyticsClientManager() {}
-
-    static{
-        m_instance = new AnalyticsClientManager();
-    }
 
     public static void initialize(HashMap<String, ChannelConfig> channelConfigs,
                                   HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings,
@@ -51,8 +49,70 @@ public class AnalyticsClientManager {
         Log.e(LOG_TAG, errorString);
     }
 
+    private static void validateMissingChannelsForTriggers(String channel,
+                                                           HashMap<String, CSVProperties> channelTriggers,
+                                                           HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings) {
+        if (channelTriggers == null) {
+            return;
+        }
+        for (String trigger : channelTriggers.keySet()) {
+            if ((triggerEventMappings.get(trigger) == null) ||
+                    (triggerEventMappings.get(trigger).get(channel) == null)) {
+                AnalyticsClientManager.logError("event missing for trigger: " + trigger +
+                        " for channel: " + channel);
+            }
+        }
+    }
 
-    protected void init(HashMap<String,ChannelConfig> channelConfigs,
+    public static void triggerEvent(String trigger, JSONObject properties) {
+        if (m_instance != null) {
+            m_instance.triggerEventInternal(trigger, properties);
+        } else {
+            logError("AnalyticsClientManager not initialized");
+        }
+    }
+
+    public static boolean setValueInMultiLevelObj(JSONObject props, String multiLevelKey, Object val) {
+        String[] levelKeys = multiLevelKey.split("\\.");
+        JSONObject currentJSONObj = props;
+        for (int i = 0; i < levelKeys.length; i++) {
+            String levelKey = levelKeys[i];
+            if (levelKey.length() <= 0) {
+                return false;
+            } else if (i == levelKeys.length - 1) {
+                try {
+                    currentJSONObj.putOpt(levelKey, val);
+                    return true;
+                } catch (JSONException e) {
+                    AnalyticsClientManager.logError("Error setting val: " + val +
+                            " for key: " + multiLevelKey + " in props: " + props);
+                    return false;
+                }
+            } else {
+                if (currentJSONObj.opt(levelKey) == null) {
+                    // key not there so create it first
+                    try {
+                        currentJSONObj.put(levelKey, new JSONObject());
+                    } catch (JSONException e) {
+                        AnalyticsClientManager.logError("Error setting val: " + val +
+                                " for key: " + multiLevelKey + " in props: " + props);
+                        return false;
+                    }
+                }
+                // ensured key is present
+                if (currentJSONObj.optJSONObject(levelKey) == null) {
+                    AnalyticsClientManager.logError("Error setting val: " + val +
+                            " for key: " + multiLevelKey + " in props: " + props);
+                    return false;
+                } else {
+                    currentJSONObj = currentJSONObj.optJSONObject(levelKey);
+                }
+            }
+        }
+        return false;
+    }
+
+    protected void init(HashMap<String, ChannelConfig> channelConfigs,
                         HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings,
                         Context c) {
         this.channelClients = new HashMap<String, AnalyticsClientInterface>();
@@ -84,29 +144,6 @@ public class AnalyticsClientManager {
         this.triggerEventMappings = triggerEventMappings;
     }
 
-    private static void validateMissingChannelsForTriggers(String channel,
-                                                           HashMap<String, CSVProperties> channelTriggers,
-                                                           HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings) {
-        if (channelTriggers == null) {
-            return;
-        }
-        for (String trigger : channelTriggers.keySet()) {
-            if ((triggerEventMappings.get(trigger) == null) ||
-                    (triggerEventMappings.get(trigger).get(channel) == null)) {
-                AnalyticsClientManager.logError("event missing for trigger: " + trigger +
-                 " for channel: " + channel);
-            }
-        }
-    }
-
-    public static void triggerEvent(String trigger, JSONObject properties) {
-        if (m_instance != null) {
-            m_instance.triggerEventInternal(trigger, properties);
-        } else {
-            logError("AnalyticsClientManager not initialized");
-        }
-    }
-
     private void triggerEventInternal(String trigger, JSONObject props) {
         if (this.triggerEventMappings.get(trigger) == null) {
             AnalyticsClientManager.logError("Trigger not present in trigger mappings provided: " + trigger);
@@ -134,6 +171,7 @@ public class AnalyticsClientManager {
             if (csvProperties == null) {
                 AnalyticsClientManager.logError("Trigger: " + trigger +
                 " not present in csv file for channel: " + channel);
+                return;
             }
 
             JSONObject eventProperties = new JSONObject();
@@ -208,45 +246,5 @@ public class AnalyticsClientManager {
         }
         return currObject;
     }
-
-   public static boolean setValueInMultiLevelObj(JSONObject props, String multiLevelKey, Object val) {
-       String [] levelKeys = multiLevelKey.split("\\.");
-       JSONObject currentJSONObj = props;
-       for (int i=0; i<levelKeys.length; i++) {
-           String levelKey = levelKeys[i];
-           if (levelKey.length() <= 0) {
-               return false;
-           } else if (i == levelKeys.length - 1) {
-               try {
-                   currentJSONObj.putOpt(levelKey, val);
-                   return true;
-               } catch (JSONException e) {
-                   AnalyticsClientManager.logError("Error setting val: " + val +
-                           " for key: " + multiLevelKey + " in props: " + props);
-                   return false;
-               }
-           } else {
-               if (currentJSONObj.opt(levelKey) == null) {
-                   // key not there so create it first
-                   try {
-                       currentJSONObj.put(levelKey, new JSONObject());
-                   } catch (JSONException e) {
-                       AnalyticsClientManager.logError("Error setting val: " + val +
-                               " for key: " + multiLevelKey + " in props: " + props);
-                       return false;
-                   }
-               }
-               // ensured key is present
-               if (currentJSONObj.optJSONObject(levelKey) == null) {
-                   AnalyticsClientManager.logError("Error setting val: " + val +
-                           " for key: " + multiLevelKey + " in props: " + props);
-                   return false;
-               } else {
-                   currentJSONObj = currentJSONObj.optJSONObject(levelKey);
-               }
-           }
-       }
-       return false;
-   }
 
 }
