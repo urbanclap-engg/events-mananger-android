@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://gitlab.urbanclap.com/urbanclap/analytics-client-manager-android'
     gitUrl = 'https://gitlab.urbanclap.com/urbanclap/analytics-client-manager-android.git'
 
-    libraryVersion = '0.0.5'
+    libraryVersion = '0.0.6'
 
     developerId = 'urbanclap'
     developerName = 'Urbanclap'
@@ -29,7 +29,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 14
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"

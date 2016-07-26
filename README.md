@@ -20,6 +20,9 @@ How to develop?
 Useful instructions: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
  
 CHANGELOG
+0.0.6
+- Changed min version sdk to 14.
+
 0.0.5
 - added null check (csv properties) in AnalyticsClientManager
 
