@@ -18,8 +18,12 @@ How to develop?
 6. run gradlew bintrayUpload
 7. Commit to master here.
 Useful instructions: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
- 
+
 CHANGELOG
+
+0.0.7
+- showing toast by default if enabled alert on error.
+
 0.0.6
 - Changed min version sdk to 14.
 

@@ -2,6 +2,7 @@ package com.urbanclap.analytics_client_manager_android;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,8 +46,17 @@ public class AnalyticsClientManager {
     }
 
     protected static void logError(String errorString) {
-        // TODO: show an acutal alert.
+        if (m_enableAlertOnError && m_instance != null) {
+            m_instance.handleError(errorString);
+        }
         Log.e(LOG_TAG, errorString);
+    }
+
+    protected void handleError(String errorString) {
+        // Clients can override this however they want
+        if (this.context != null) {
+            Toast.makeText(this.context, errorString, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private static void validateMissingChannelsForTriggers(String channel,
