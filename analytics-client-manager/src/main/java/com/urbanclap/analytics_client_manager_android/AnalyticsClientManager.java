@@ -1,6 +1,7 @@
 package com.urbanclap.analytics_client_manager_android;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,7 +28,11 @@ public class AnalyticsClientManager {
     private HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings;
     private Context context;
 
-    protected AnalyticsClientManager() {}
+    @Nullable
+    private OnErrorCallback onErrorCallback = null;
+
+    protected AnalyticsClientManager() {
+    }
 
     public static void initialize(HashMap<String, ChannelConfig> channelConfigs,
                                   HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings,
@@ -57,6 +62,9 @@ public class AnalyticsClientManager {
         if (this.context != null) {
             Toast.makeText(this.context, errorString, Toast.LENGTH_SHORT).show();
         }
+
+        if (onErrorCallback != null)
+            onErrorCallback.onError(errorString);
     }
 
     private static void validateMissingChannelsForTriggers(String channel,
@@ -122,6 +130,10 @@ public class AnalyticsClientManager {
         return false;
     }
 
+    public void setOnErrorCallback(@Nullable OnErrorCallback onErrorCallback) {
+        this.onErrorCallback = onErrorCallback;
+    }
+
     protected void init(HashMap<String, ChannelConfig> channelConfigs,
                         HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings,
                         Context c) {
@@ -173,20 +185,20 @@ public class AnalyticsClientManager {
 
             HashMap<String, CSVProperties> channelSpecificTriggers = this.channelTriggerMappings.get(channel);
             if (channelSpecificTriggers == null) {
-                AnalyticsClientManager.logError("channel: "+ channel + " doesn't have a csv file for defining triggers");
+                AnalyticsClientManager.logError("channel: " + channel + " doesn't have a csv file for defining triggers");
                 continue;
             }
 
             CSVProperties csvProperties = channelSpecificTriggers.get(trigger);
             if (csvProperties == null) {
                 AnalyticsClientManager.logError("Trigger: " + trigger +
-                " not present in csv file for channel: " + channel);
+                        " not present in csv file for channel: " + channel);
                 return;
             }
 
             JSONObject eventProperties = new JSONObject();
             boolean isMissingKey = false;
-            for (Map.Entry<String, String>csvPropertyEntry : csvProperties.entrySet()) {
+            for (Map.Entry<String, String> csvPropertyEntry : csvProperties.entrySet()) {
                 String eventKey = csvPropertyEntry.getKey();
                 String eventValue = csvPropertyEntry.getValue();
 
@@ -196,9 +208,9 @@ public class AnalyticsClientManager {
                     if (propsKey == null) {
                         isMissingKey = true;
                         AnalyticsClientManager.logError("eventKey: " + eventKey +
-                        " needs to be overriden for channel: " + channel +
-                        " and trigger: " + trigger);
-                        break;
+                                " needs to be overriden for channel: " + channel +
+                                " and trigger: " + trigger);
+                        continue;
                     }
                     if (props == null) {
                         isMissingKey = true;
@@ -206,35 +218,29 @@ public class AnalyticsClientManager {
                                 " channel: " + channel + " requires eventKey: " + eventKey +
                                 " to be overriden, but called with empty props"
                         );
-                        break;
+                        continue;
                     }
                     Object val = getValueInMultiLevelObj(props, propsKey);
                     if (val == null) {
                         isMissingKey = true;
                         AnalyticsClientManager.logError("path for key: " + propsKey +
-                        " not present in props: " + props +
-                        " for channel: " + channel + " trigger: " + trigger);
-                        break;
+                                " not present in props: " + props +
+                                " for channel: " + channel + " trigger: " + trigger);
+                        continue;
                     }
 
-                    if (AnalyticsClientManager.setValueInMultiLevelObj(eventProperties, eventKey, val)) {
-                        // all good, were able to set
-                    } else {
+                    if (!AnalyticsClientManager.setValueInMultiLevelObj(eventProperties, eventKey, val)) {
                         isMissingKey = true;
                         AnalyticsClientManager.logError("unable to set value for key: " + eventKey +
-                        " in eventProps " + eventProperties);
-                        break;
+                                " in eventProps " + eventProperties);
                     }
                 } else {
                     // non dev provided
-                    if (AnalyticsClientManager.setValueInMultiLevelObj(eventProperties, eventKey, eventValue)) {
-                        // all good
-                    } else {
+                    if (!AnalyticsClientManager.setValueInMultiLevelObj(eventProperties, eventKey, eventValue)) {
                         isMissingKey = true;
                         AnalyticsClientManager.logError("unable to set csv value for key: " + eventKey +
-                                " in eventProps " + eventProperties + " for channel: "+ channel +
-                        " and trigger: " + trigger);
-                        break;
+                                " in eventProps " + eventProperties + " for channel: " + channel +
+                                " and trigger: " + trigger);
                     }
                 }
             }
@@ -245,11 +251,11 @@ public class AnalyticsClientManager {
     }
 
     private Object getValueInMultiLevelObj(JSONObject propsObj, String multiLevelKey) {
-        String [] levelKeys = multiLevelKey.split("\\.");
+        String[] levelKeys = multiLevelKey.split("\\.");
         Object currObject = propsObj;
         for (String levelKey : levelKeys) {
-            if ((currObject instanceof JSONObject) && (((JSONObject)currObject).opt(levelKey) != null)) {
-                currObject = ((JSONObject)currObject).opt(levelKey);
+            if ((currObject instanceof JSONObject) && (((JSONObject) currObject).opt(levelKey) != null)) {
+                currObject = ((JSONObject) currObject).opt(levelKey);
             } else {
                 return null;
             }
