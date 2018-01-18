@@ -21,6 +21,10 @@ Useful instructions: https://inthecheesefactory.com/blog/how-to-upload-library-t
 
 CHANGELOG
 
+0.0.8
+- made the firing of events more lenient. It will send events to the server despite some missing params.
+- added onErrorCallback for client to receive any error and have custom handling.
+
 0.0.7
 - showing toast by default if enabled alert on error.
 
