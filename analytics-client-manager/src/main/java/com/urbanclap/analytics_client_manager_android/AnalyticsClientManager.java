@@ -1,7 +1,6 @@
 package com.urbanclap.analytics_client_manager_android;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,7 +27,6 @@ public class AnalyticsClientManager {
     private HashMap<String, HashMap<String, DevOverrides>> triggerEventMappings;
     private Context context;
 
-    @Nullable
     private OnErrorCallback onErrorCallback = null;
 
     protected AnalyticsClientManager() {
@@ -130,7 +128,7 @@ public class AnalyticsClientManager {
         return false;
     }
 
-    public void setOnErrorCallback(@Nullable OnErrorCallback onErrorCallback) {
+    public void setOnErrorCallback(OnErrorCallback onErrorCallback) {
         this.onErrorCallback = onErrorCallback;
     }
 
