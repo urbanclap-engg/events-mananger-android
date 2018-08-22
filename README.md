@@ -6,13 +6,9 @@ Analytics client manager is a csv based events library which can be used to set 
 ---
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-   In your app/module `build.grade` add the following repo: 
-```sh 
-maven { url "https://dl.bintray.com/uc-engg/maven" }
-```
-  In dependencies add:
+In your module's `build.gradle` add the following dependency:
 ```sh
-api 'com.urbanclap:analytics-client-manager:0.0.1'
+api 'com.urbanclap:analytics-client-manager:0.0.7'
 ```
 
 ## PreSetup
@@ -107,3 +103,5 @@ AnalyticsClientManager.triggerEvent(HomeLoadTrigger, new JSONObject("{
     'event_value': '143'
 }");
 ```
+
+Also you can use the included `JsonHelper` to convert your analytics properties from Map to Json.
