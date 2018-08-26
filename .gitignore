@@ -1,0 +1,38 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/build
+.idea/*
+​*/build/*​
+*.iml
+/app/unused.txt
+/app/libs
+.DS_Store
+/app/seeds.txt
+/app/proguard-project.txt
+/app/mapping.txt
+/app/class_files.txt
+/app/manifest-merger-production-release-report.txt
+
+
+# gradle/ comment this when using gradle wrapper.
+build/
+gen/
+tmp/
+
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+
+# Local configuration file (sdk path, etc)
+local.properties
